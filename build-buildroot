@@ -22,7 +22,6 @@ defaults = {
     'kernel_config_fragment': [],
     'kernel_custom_config_file': None,
     'kernel_modules': False,
-    'no_kernel_modules': False,
     'linux_reconfigure': False,
     'no_all': False,
     'nproc': None,

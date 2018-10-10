@@ -59,7 +59,7 @@ The trade-offs are basically a balance between:
 * portability: does it work on a Windows host? Could it ever?
 * accuracy: how accurate does the simulation represent real hardware?
 * compatibility: how likely is is that all the components will work well together: emulator, compiler, kernel, standard library, ...
-* guest software availability: how wide is your choice of easily installed guest software packages?
+* guest software availability: how wide is your choice of easily installed guest software packages? See also: <<linux->>
 
 === QEMU Buildroot setup
 
@@ -86,6 +86,7 @@ The initial build will take a while (30 minutes to 2 hours) to clone and build, 
 If you don't want to wait, you could also try the following faster but much more limited methods:
 
 * <<prebuilt>>
+* <<ubuntu>>
 * <<host>>
 
 but you will soon find that they are simply not enough if you anywhere near serious about systems programming.
@@ -620,11 +621,14 @@ sudo apt-get install qemu-utils
 The Linux kernel is required for `extract-vmlinux` to convert the compressed kernel image which QEMU understands into the raw vmlinux that gem5 understands: https://superuser.com/questions/298826/how-do-i-uncompress-vmlinuz-to-vmlinux
 ////
 
+[[ubuntu]]
 === Ubuntu guest setup
 
 ==== About the Ubuntu guest setup
 
-This setup is similar to <<prebuilt>>, but it instead downloads an Ubuntu image with Docker, and uses that as the root filesystem.
+This setup is similar to <<prebuilt>>, but instead of using Buildroot for the root filesystem, it downloads an Ubuntu image with Docker, and uses that as the root filesystem.
+
+The rationale for choice of Ubuntu as a second distribution in addition to Buildroot can be found at: <<linux-distro-choice>>
 
 Advantages over Buildroot:
 
@@ -10439,7 +10443,7 @@ Lenovo ThinkPad link:https://www3.lenovo.com/gb/en/laptops/thinkpad/p-series/P51
 
 === Benchmark Internets
 
-==== 38Mbps
+==== 38Mbps internet
 
 2c12b21b304178a81c9912817b782ead0286d282:
 
@@ -11220,6 +11224,54 @@ Source: link:release-upload[]
 Create `LKMC_GITHUB_TOKEN` under: https://github.com/settings/tokens/new and save it to your `.bashrc`.
 
 TODO: generalize that so that people can upload to their forks.
+
+=== Linux distro choice
+
+We haven't found the ultimate distro yet, here is a summary table of trade-offs that we care about:
+
+[options="header"]
+|===
+|Distro |Packages in single Git tree |Git tracked docs |Cross build without QEMU |Prebuilt downloads |Number of packages
+
+|Buildroot 2018.05
+|y
+|y
+|y
+|n
+|2k (1)
+
+|Ubuntu 18.04
+|n
+|n
+|n
+|y
+|50k (3)
+
+|Yocto 2.5 (8)
+|?
+|y (5)
+|?
+|y (6)
+|400 (7)
+
+
+|Alpine Linux 3.8.0
+|y
+|n (1)
+|?
+|y
+|2000 (4)
+
+|===
+
+* (1): Wiki... https://wiki.alpinelinux.org/wiki/Main_Page
+* (2): `ls packages | wc`
+* (3): https://askubuntu.com/questions/120630/how-many-packages-are-in-the-main-repository
+* (4): `ls main community non-free | wc`
+* (5): yes, but on a separate Git tree... https://git.yoctoproject.org/cgit/cgit.cgi/yocto-docs/
+* (6): yes, but the initial Poky build / download still took 5 hours on <<38mbps-internet>>, and QEMU failed to boot at the end... https://bugzilla.yoctoproject.org/show_bug.cgi?id=12953
+* (7): `ls recipes-* | wc`
+* (8): Poky reference system: http://git.yoctoproject.org/cgit/cgit.cgi/poky
 
 === Fairy tale
 
